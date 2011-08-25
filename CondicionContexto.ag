@@ -1,0 +1,608 @@
+{
+import Char
+}
+{-
+===================================================================================================
+   Autor   -> Antonio Mamani Quispe
+   Nombre  -> Gramatica Abstracta Ocaml 
+   Version -> 0.9
+===================================================================================================
+-}
+
+
+
+DATA Raiz 
+ | Raiz Cuerpo
+
+
+DATA Cuerpo 
+  | Cuerpo ListDefinicion 
+
+TYPE ListDefinicion = [DefinicionList]
+
+-- DATA ListDefinicion 
+-- | Cons DefinicionList ListDefinicion
+-- | Nil 
+
+DATA DefinicionList
+ | DefinicionList Definicion Fin
+
+DATA Fin 
+ | Fin 
+ | EmptyFin
+
+DATA Definicion 
+ | DefinicionLet Rec ListLetBinding
+
+DATA Rec 
+ | Rec 
+ | EmptyRec
+
+TYPE ListLetBinding = [LetBinding]
+
+-- DATA ListLetBinding
+-- | Cons LetBinding ListLetBinding
+-- | Nil
+
+DATA LetBinding 
+ | LetBindingPat Pattern Expr
+
+---------------------------------------------------------------------------------------------------
+----------------------------------------- Pattern -------------------------------------------------
+---------------------------------------------------------------------------------------------------
+
+DATA Pattern 
+ | PatternValue ValueName
+ | PatternCons  Constant 
+
+{-
+---------------------------------------------------------------------------------------------------
+----------------------------------------- Constants -----------------------------------------------
+---------------------------------------------------------------------------------------------------
+-}
+DATA Constant | ConstantInteger Integer
+              | ConstantFloat
+              | ConstantChar
+              | ConstantString
+              | ConstantConstr  Constr
+              | ConstantFalse
+              | ConstantTrue
+              | ConstantConrch
+              | ConstantParent
+              | ConstantTag     TagName
+{-
+----------------------------------------- NAME ----------------------------------------------------
+---------------------------------------------------------------------------------------------------
+-}
+{
+type Lidentifier = String
+type Uidentifier = String
+type Prefix      = String
+type Infix       = String
+}
+{-
+------------------------------------ Naming objects -----------------------------------------------
+-}
+
+DATA ValueName  | ValueName     Lidentifier  
+                | ValueNameFix  OperatorName
+
+
+DATA OperatorName | OperatorPrefix Prefix
+                  | OperatorInfix  InfixOp
+
+
+DATA Op
+ | Op ope: String
+
+
+DATA InfixOp | InfixOP  Infix
+             | Admin
+             | Aplica
+             | Dolar
+             | Option
+             | Sombrero
+             | Arroba
+             | Menos
+             | Mayor
+             | Menor
+             | Div
+             | Mas
+             | Asterisc
+             | Igual
+             | Ors
+             | And
+             | Equals
+             | Mod
+             | Load
+             | Lor
+             | Lxor
+             | Lsl
+             | Lsr
+             | Asr
+
+
+DATA ConstructorName |  ConstructorName Uidentifier
+
+DATA LabelNames      |  LabelNames      Lidentifier
+
+DATA TagName         |  TagName         Uidentifier
+
+DATA TypeConstrName  |  TypeConstrName  Lidentifier
+
+DATA FieldName       |  FieldName       Lidentifier
+
+DATA ModuleName      |  ModuleName      Uidentifier
+
+DATA ModuleTypeName  |  ModuleTypeNameL Lidentifier
+                     | ModuleTypeNameU  Uidentifier
+
+DATA ClassName       |  ClassName       Lidentifier
+
+DATA MethodName      |  MethodName      Lidentifier
+
+DATA InstVariantName |  InstVariantName Lidentifier
+
+---------------------------------------------------------------------------------------------------
+----------------------------------------- Expressions ---------------------------------------------
+---------------------------------------------------------------------------------------------------
+
+DATA Expr
+    | ExprInfixOP     Op              first:Expr       second:Expr
+    | ExprValuePath   ValuePath
+    | ExprConstant    Constant 
+    | ExprGrup        Expr             KeyOpeT
+    | ExprBegin       Expr
+    | ExprExpr        ListExpr 
+    | ExprConstr      Constr           Expr
+    | ExprTagName     TagName          Expr
+    | ExprCostLista   firstC:Expr      seconfC:Expr
+    | ExprLista       ListExpr
+    | ExprArray       ListExpr
+    | ExprField       ListFieldExpr
+    | ExprWhit        Expr             ListFieldExpr
+    | ExprArgument    ListArgument     Expr     
+    | ExprPrefixSym   Expr
+    | ExprFieldKey    FieldKey         Expr
+    | ExprIf          comp:Expr        then:Expr        Else 
+    | ExprWhile       egual:Expr       doo:Expr 
+    | ExprFor         ValueName        eval:Expr        ToDow   opera:Expr  do:Expr
+    | ExprExpr2       fist:Expr        second:Expr
+    | ExprMatch       Expr             PatternMatching
+    | ExprFunction    PatternMatching
+    | ExprFun         MultipleMatching
+    | ExprTry         Expr             PatternMatching
+    | ExprLet         Rec           ListLetBinding   Expr
+    | ExprMethodName  MethodName       Expr
+    | ExprInstVarName InstVariantName  ExpreFlec
+    | ExprAssert      Expr
+    | ExprLazy        Expr
+{-    | ExprClassPath   ClassPath -}
+{-    | ExprTypexpr    Expr       Typexpr -}
+{-    | ExprClassBody  ClassBody -}
+
+
+DATA ExpreFlec 
+ | ExpreFlec Expr 
+
+TYPE ListExpr = [Expr]
+
+{-
+DATA ListExpr
+ | Cons Expr ListExpr 
+ | Nil
+-}
+
+TYPE ListFieldExpr = [FieldExpr]
+
+{-
+DATA ListFieldExpr 
+ | Cons FieldExpr ListFieldExpr
+ | Nil
+-}
+
+DATA KeyOpeT 
+ | KeyBrea
+-- | KeyOper Typexpr KeyPrefi 
+-- | KeyInfi Typexpr
+
+DATA KeyPrefi 
+ | KeycBrea
+-- | KeyInfix Typexpr
+
+DATA PatternMatching 
+ | PatternMatching ListOptPattern  
+
+TYPE ListOptPattern = [OptPattern]
+
+{-
+DATA ListOptPattern
+ | Cons OptPattern ListOptPattern
+ | Nil
+-}
+
+DATA OptPattern 
+ | OptPattern Pattern WhenKey Expr
+
+DATA WhenKey 
+ | WhenKey
+ | When    Expr
+
+DATA MultipleMatching 
+ | MultipleMatchingPat    ListParameter Expr
+ | MultipleMatchingPatExp ListParameter Expr
+
+TYPE ListParameter = [Parameter]
+
+-- DATA ListParameter
+-- | Cons Parameter ListParameter
+-- | Nil
+
+DATA EqualOper 
+ | EqualExp
+-- | EqualOper Typexpr
+
+
+DATA ToDow 
+ | To
+ | Downto
+
+DATA FieldExpr 
+ | FieldExpr Field Expr
+
+DATA Else 
+ | Else Expr
+ | EmptyElse
+
+DATA InstVar 
+ | InstVar InstVariantName Expr
+
+DATA FieldKey 
+ | FieldKeyFiel Field  OptField     
+ | FieldKeyBrek Expr   OptField
+ | FieldKeyCor  Expr   OptField
+
+DATA OptField 
+ | OptField Expr
+ | EmptyOpt
+
+DATA Argument 
+ | ArgumentExp Expr
+
+TYPE ListArgument = [Argument]
+{-
+DATA ListArgument
+ | Cons Argument ListArgument
+ | Nil
+-}
+
+DATA Parameter 
+ | ParameterPattern Pattern
+
+{-
+----------------------------- Referring to named objects ------------------------------------------
+-}
+ 
+DATA ValuePath | ValuePath     ValueName
+               | ValuePathMod ModulePath ValueName
+
+DATA Constr | Constr       ConstructorName
+            | ConstrModule ModulePath ConstructorName
+
+DATA Typeconstr |  Typeconstr   TypeConstrName 
+                | TypeconstrExt ExtendedModulePath TypeConstrName
+
+DATA Field |  Field      FieldName
+           | FieldModule ModulePath FieldName
+
+DATA ModulePath  | ModulePath  ModuleName ModulePath'
+
+DATA ModulePath' | ModulePath' ModuleName ModulePath'
+                 | EmptyModule
+
+DATA ExtendedModulePath  |  ExtendedModulePath ModuleName ExtendedModulePath'
+
+DATA ExtendedModulePath' | ExtendedModulePath' ModuleName ExtendedModulePath'
+                         | ExtendedModulePath'Ext ExtendedModulePath ExtendedModulePath'
+                         | EmptyExMoPath
+DATA ClassPath | ClassPath    ClassName
+
+DATA ModtypePath | ModtypePath    ModuleTypeName
+                 | ModtypePathExt ExtendedModulePath ModuleTypeName
+
+               | ClassPathMod ModulePath ClassName
+
+DERIVING * :Show
+
+{-
+===================================================================================================
+   Autor   -> Antonio Mamani Quispe
+   Nombre  -> Condiciones de Contexto
+              1.- No se puede utilizar variables que no esten declaradas
+   Version -> 0.9
+===================================================================================================
+-}
+
+
+ATTR Raiz [||salida:{IO ()}]
+SEM Raiz 
+ | Raiz lhs.salida = {putStr @cuerpo.decls}
+
+ATTR ListDefinicion DefinicionList  Definicion ListLetBinding LetBinding  Pattern Expr  ValueName ListArgument Argument Else ListExpr ExpreFlec ListFieldExpr FieldExpr FieldKey InstVar MultipleMatching OptField 
+     PatternMatching  ListOptPattern  OptPattern ListParameter  Parameter ValuePath WhenKey [|declarados:{[String]}|]
+
+SEM Cuerpo
+ | Cuerpo listDefinicion.declarados = {[]}
+
+SEM ListDefinicion 
+ | Cons lhs.declarados = { @hd.declarados ++ @tl.declarados} --@lhs.declarados
+
+
+SEM DefinicionList
+ | DefinicionList definicion.declarados =  @lhs.declarados
+
+
+SEM Definicion 
+ | DefinicionLet  listLetBinding.declarados =@lhs.declarados
+
+SEM ListLetBinding
+ | Cons lhs.declarados = { @hd.declarados ++ @tl.declarados}
+
+
+SEM LetBinding 
+ | LetBindingPat pattern.declarados = @lhs.declarados
+--                 expr.declarados = []
+
+SEM Pattern 
+  | PatternValue valueName.declarados = @lhs.declarados
+	
+
+SEM ValueName  
+ | ValueName  lhs.declarados = { cargar  @lidentifier @lhs.declarados }
+-- | ValueNameFix lhs.declarados = ""
+
+{
+cargar id decls | elem id decls = decls
+                | otherwise     = id:decls
+}
+
+
+ATTR Constant [||tipo:String]
+
+SEM Constant 
+  | ConstantInteger lhs.tipo = {show @integer}
+  | ConstantFloat   lhs.tipo = ""
+  | ConstantChar    lhs.tipo = ""
+  | ConstantString  lhs.tipo = "string"
+  | ConstantConstr  lhs.tipo = "" -- Constr
+  | ConstantFalse   lhs.tipo = ""
+  | ConstantTrue    lhs.tipo = ""
+  | ConstantConrch  lhs.tipo = ""
+  | ConstantParent  lhs.tipo = ""
+  | ConstantTag     lhs.tipo = "" -- TagName
+
+
+
+ATTR Cuerpo ListDefinicion DefinicionList Definicion ListLetBinding LetBinding  Pattern Expr Op  ValueName ListArgument Argument Else ListExpr ExpreFlec ListFieldExpr FieldExpr FieldKey InstVar MultipleMatching OptField 
+     PatternMatching  ListOptPattern  OptPattern ListParameter Parameter ValuePath WhenKey [||decls:String boolean:String ]
+
+SEM ValueName 
+ | ValueName lhs.decls = {errorDecl @lidentifier @lhs.declarados}
+                lhs.boolean = ""
+ | ValueNameFix lhs.decls = ""
+                lhs.boolean = ""
+{
+errorDecl id var | elem id var  = ""
+                 | otherwise    = "error variable " ++ id ++ " no declarado" 
+
+-- var = ["a","b","c","d","f"]
+}
+
+SEM Op
+ | Op  lhs.boolean = @ope
+       lhs.decls   = ""
+
+SEM ListExpr 
+ | Cons lhs.decls = {@hd.decls ++ @tl.decls }
+ | Cons lhs.boolean = {@hd.boolean ++ @tl.boolean }
+ | Nil  lhs.decls = ""
+        lhs.boolean = ""
+
+SEM Expr
+    | ExprInfixOP     lhs.decls   = {@op.decls ++ @first.decls ++ @second.decls}
+                      lhs.boolean = {typo @op.boolean @first.boolean @second.boolean } 
+    | ExprValuePath   lhs.decls   = @valuePath.decls
+    | ExprConstant    lhs.decls   = "" --{"b " ++ @constant.tipo}
+                      lhs.boolean = {@constant.tipo}
+
+    | ExprGrup        lhs.decls   = @expr.decls
+    | ExprBegin       lhs.decls   = @expr.decls
+    | ExprExpr        lhs.decls   = @listExpr.decls 
+    | ExprConstr      lhs.decls   = @expr.decls
+    | ExprTagName     lhs.decls   = @expr.decls
+    | ExprCostLista   lhs.decls   = {@firstC.decls ++ @seconfC.decls}
+    | ExprLista       lhs.decls   = @listExpr.decls
+    | ExprArray       lhs.decls   = @listExpr.decls
+    | ExprField       lhs.decls   = @listFieldExpr.decls
+    | ExprWhit        lhs.decls   = {@expr.decls  ++ @listFieldExpr.decls}
+    | ExprArgument    lhs.decls   = {@listArgument.decls ++ @expr.decls}     
+    | ExprPrefixSym   lhs.decls   = @expr.decls
+    | ExprFieldKey    lhs.decls   = @expr.decls
+    | ExprIf          lhs.decls   = { @comp.decls ++ @then.decls} 
+                      lhs.boolean = @comp.boolean  --{bolean @comp.boolean }
+    | ExprWhile       lhs.decls   = @egual.decls
+    | ExprFor         lhs.decls   = @valueName.decls       
+    | ExprMatch       lhs.decls   = {@expr.decls ++ @patternMatching.decls }
+                      lhs.boolean = @patternMatching.boolean
+    | ExprFunction    lhs.decls   = ""
+    | ExprFun         lhs.decls   = ""
+    | ExprTry         lhs.decls   = @expr.decls
+    | ExprLet         lhs.decls   = @expr.decls
+    | ExprMethodName  lhs.decls   = @expr.decls
+    | ExprInstVarName lhs.decls   = ""  -- InstVariantName  ExpreFlec
+    | ExprAssert      lhs.decls   = @expr.decls
+    | ExprLazy        lhs.decls   = @expr.decls
+
+{
+
+typo t first second | t == "+"  = suma first second                   
+                    | elem t ["<",">"] = buleano first second
+                    | otherwise = ""
+
+                 where 
+                   suma [] _ = " Tipos Incompatibles \n"
+                   suma _ [] = " Tipos Incompatibles \n"
+--                   suma [] [] = ""
+                   suma (x:fi) (y:se) | isDigit x && isDigit x = ""
+                                      | isDigit x && (elem y var2) = ""
+                                      | (elem x var2) && isDigit y = ""
+--                                      | isAlpha x && isDigit y  = " Tipos Incompatibles " ++ fi ++ se ++ "\n"
+  --                                    | isDigit x && isAlpha y  = " Tipos Incompatibles \n"
+    --                                  | isDigit x  (elem y var) = " Tipos Incompatibles \n"
+      --                                | (elem x var) /= isDigit y = "Tipos Incompatibles \n" 
+                                      | otherwise = " Tipos Incompatibles " ++ fi ++" "++ se ++"\n"
+                   buleano f s = suma f s
+
+var2 = "abcdf"
+
+berificar x | x == "string" = ""
+            | x == [] = ""
+            | otherwise ="Tipo incompatibles " ++ x
+
+{-                where 
+                  suma _ _ False = False
+                  suma [] [] True = True
+                  suma _ [] True = True
+                  suma [] _ True = True
+                  suma (x:fi) (y:se) b | ( isDigit x && isDigit y )&& b = suma fi se  b
+                                       | ( isAlpha x || isAlpha y ) && b= suma [] [] False
+--                                       | isAlpha x && b = suma [] False
+                                       | otherwise = False
+
+Cuerpo [DefinicionList 
+          (DefinicionLet 
+                EmptyRec 
+                [LetBindingPat 
+                      (PatternValue (ValueName "b")) 
+                      (ExprMatch 
+                          (ExprValuePath (ValuePath (ValueName "a"))) 
+                          (PatternMatching 
+                              [OptPattern (PatternCons ConstantInteger) WhenKey (ExprConstant ConstantString),
+                               OptPattern (PatternCons ConstantInteger) WhenKey (ExprConstant ConstantString),
+                               OptPattern (PatternCons ConstantInteger) WhenKey (ExprConstant ConstantInteger)
+                              ]
+                           )
+                       )
+                 ]
+            ) 
+            Fin
+         ]
+
+
+Cuerpo [ DefinicionList 
+           ( DefinicionLet 
+                 EmptyRec 
+                 [ LetBindingPat 
+                      (PatternValue (ValueName "a")) 
+                      (ExprInfixOP (Op "+") 
+                         (ExprInfixOP (Op "+") 
+                              (ExprInfixOP (Op "+") 
+                                  ( ExprInfixOP (Op "+") 
+                                        (ExprInfixOP (Op "+") (ExprConstant ConstantInteger) (ExprConstant ConstantInteger))
+                                        (ExprConstant ConstantInteger)
+                                  ) (ExprConstant ConstantInteger)
+                              ) (ExprConstant ConstantInteger)
+                         ) 
+                         (ExprConstant ConstantInteger)
+                      )
+               ]) Fin]
+-}
+
+}
+
+SEM ValuePath 
+ | ValuePath   lhs.decls  = @valueName.decls
+-- | ValuePathMod lhs.decls = @valueName.delcs
+
+
+SEM Argument 
+ | ArgumentExp lhs.decls = @expr.decls
+
+SEM ListArgument
+ | Cons lhs.decls = { @hd.decls ++ @tl.decls }
+-- | Cons lhs.decls = { @argument.decls ++ @argument.decls }
+ | Nil  lhs.decls = ""
+        lhs.boolean = ""
+
+SEM ListFieldExpr
+ | Cons lhs.decls = { @hd.decls ++ @tl.decls }
+ | Nil  lhs.decls = ""
+        lhs.boolean = ""
+
+SEM ListLetBinding
+ | Cons lhs.decls = { @hd.decls ++ @tl.decls }
+        lhs.boolean = { @hd.boolean ++ @tl.boolean }
+ | Nil  lhs.decls = ""
+        lhs.boolean = ""
+
+SEM ListParameter
+ | Cons lhs.decls = { @hd.decls ++ @tl.decls }
+        lhs.boolean = { @hd.boolean ++ @tl.boolean }
+ | Nil  lhs.decls = ""
+        lhs.boolean = ""
+
+SEM ListDefinicion
+ | Cons lhs.decls = { @hd.decls ++ @tl.decls }
+        lhs.boolean = { @hd.boolean ++ @tl.boolean }
+ | Nil  lhs.decls = ""
+        lhs.boolean = ""
+
+SEM ListOptPattern
+ | Cons lhs.decls = { @hd.decls ++ @tl.decls }
+        lhs.boolean = { @hd.boolean ++ @tl.boolean }
+ | Nil  lhs.decls = ""
+        lhs.boolean = ""
+
+SEM Else 
+ | Else      lhs.decls   = @expr.decls
+             lhs.boolean = @expr.boolean
+ | EmptyElse lhs.decls   = ""
+             lhs.boolean = ""
+
+SEM OptField 
+ | OptField lhs.decls = @expr.decls
+            lhs.boolean = @expr.boolean
+ | EmptyOpt lhs.decls = ""
+            lhs.boolean = ""
+
+SEM WhenKey 
+ | WhenKey lhs.decls = ""
+           lhs.boolean = ""
+ | When    lhs.decls = @expr.decls
+           lhs.boolean = @expr.boolean
+
+SEM Pattern 
+ | PatternValue lhs.decls = @valueName.decls
+                lhs.boolean = @valueName.boolean 
+ | PatternCons  lhs.decls = "" 
+                lhs.boolean = ""
+
+SEM LetBinding 
+ | LetBindingPat lhs.decls = {@pattern.decls ++ @expr.decls}
+                 lhs.boolean = @expr.boolean
+
+SEM Definicion 
+ | DefinicionLet lhs.decls = @listLetBinding.decls
+                 lhs.boolean = @listLetBinding.boolean
+
+SEM DefinicionList
+ | DefinicionList lhs.decls = @definicion.decls
+                  lhs.boolean = @definicion.boolean
+
+SEM PatternMatching 
+ | PatternMatching lhs.decls = @listOptPattern.decls
+                   lhs.boolean = @listOptPattern.boolean
+
+SEM OptPattern 
+ | OptPattern lhs.decls =  @expr.decls	
+              lhs.boolean = { berificar  @expr.boolean }

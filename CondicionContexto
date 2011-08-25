@@ -1,0 +1,140 @@
+===================================================================================================
+Autor: Antonio Mamani Quispe
+===================================================================================================
+1, 4, 5, 6 ,9 ,14                      Condiciones de Contexto Ocaml
+===================================================================================================
+Identificadores
+===================================================================================================
+
+1. para utilizar un identificador antes tiene que ser declarada
+   
+     let dos    = 2;;       
+     let cuatro = dos+2;;   
+     let diez   = 7+tres;;      // error, el identificador "tres" no fue declarado
+
+2. al momento de definir un identificdor no puede estar en el lado derecho
+     
+    let uno = uno+1;;          // Error, uno en el lado derecho no tiene un valor valido 
+
+3. Para utilizar un registro antes tiene que estar definido
+       (*
+        type cardex =
+          {
+          nombre = string;
+          anio = int;
+          };;
+        *)
+       
+        let antonio = 
+           { nombre = "antonio";          
+             edad = 24;
+             ci  = 1234           //Error, no esta definido un registro que cumpla con el patron.
+           };;
+
+===================================================================================================
+Tipos 
+===================================================================================================
+
+4. El tipo de las expreciones debe ser compatible con los operadores usados y los identificadores asociados
+   
+    let suma  = 4 + "hola" // Error, el operando derecho no es entero
+    let suma2 = 3 +. 4.3  //  Error, el operando izquierdo no es de tipo float
+
+5. La evaluacion de la condicion if,while, deben ser booleano
+    
+    let a = 5
+    let b = if a then "funciona" then "no funciona"  //Error, la evaluacion de la condicion if debe ser booleano
+
+6. El tipo de retorno de la evaluacion if, match , function debe ser del mismo tipo
+
+     let mayor a b = if a>b then a else "hola";;   //Error, los retornos de la funcion son del mismo tipo
+    
+     let numero a = match a with    
+                    1 -> "uno" 
+                  | 2 -> "dos"
+                  | _ -> 122;;               // Error, los retornos de la funcion no son del mismo tipo
+     
+     let numero a = function
+                  | 1 -> "uno"
+                  | 2 -> 2                 // Error, la evaluacion 
+ 
+
+7. los valores de una lista y un arreglo deben ser del mismo tipo
+      
+        let lista = [1;"2"]        //Error, los valores de la lita debe ser del mismo tipo
+        let lista = 1::2::"3"::[]  //Error, los valores de la construcion de la lista deben ser del mismo tipo
+
+        let arreglo = [|1;2;3;4;"a"|] //Error, los valores del arreglo deben ser del mismo tipo
+
+8. La asignacion de los identificadores del for deben ser de tipo int.  El expr1 y la expr2 deben ser de tipo int en la siguiete sintaxis del for.
+        
+       1. for identificador = expr1 to expr2 do expr3 done
+
+       2. for identificador = expr1 downto expr2 do expr3 done
+
+ 
+      for i="a" to 10 do print_int i;             //Error, el valos de i debe ser de tipo int
+      print_string " " done; print_newline();;
+
+=============================================================================================================================================
+
+9. Para poder modificar un valor de un Registro, el label tiene que ser creado de tipo mutable 
+
+    type kardex =
+      { nombre          : string;
+        apellido        : string;
+        mutable salario : float
+      };;
+    
+    let antonio  = 
+      { nombre   = "Antonio";
+        apellido = "mamani";
+        salario  = 0.0
+      };;
+    antonio.salario <- 10000000.0;;
+    antonio.apellido <- "Mamani"       //Error, el label apellido no es mutable 
+ 
+10. no se puede acceder a datos que no esten dentro de el rango de un arreglo 
+            
+        let arreglo = [|1;2;3;4|];;
+        arreglo.(5);;     //Error, el valor que quiere acceder esta fuera del rango del arreglo
+
+11. no se puede aceeder a las varibles que estan declaradas posteriormente 
+       
+          let a = 5 + b;;       //Error, no encunetra la variable b
+          let b = 10;;
+
+12. no se pude remplazar un dato del arreglo con uno que es de diferente tipo
+
+        let arreglo = [|1;2;3;4|];;
+        arreglo.(3)<- "hola"        Error, tipos incompatibles
+
+13. no se pude crear un objeto si no esta dafinida la clase
+
+       let pepe = new Persona;;     //Error. no existe la clase Persona
+
+14. no se pude editar las variables si no son de tipo muble en la clase
+ 
+        class persona =
+          object
+              val nombre = ""
+              method get = nombre
+              method cambiar d = nombre <- d       
+        end;;
+    
+       let juan = new persona;;
+       let#cambiar <- "JUAN";;       //Error, la variable nombre no se pude editar
+
+15.  no se permitido enviar argumentos demas a un metodo de un objeto
+  
+      class suma =
+        object
+          val mutable res = 0
+          method get = res
+          method sumar x y = res <-x+y
+      end;;
+      
+     let add=new suma;;
+     add#sumar 2 3 4         //Error, 
+
+Nota: aun esta en desarrollo las condiciones de contexto
